@@ -45,8 +45,6 @@ class userValueList {
      * @var userValueListController $controller
      */
     public $controller = null;
-    
-    public $chunks = array();
 
     function __construct(modX &$modx,array $config = array()) {
         $this->modx =& $modx;
@@ -89,6 +87,10 @@ class userValueList {
 
         return $output;
     }
+	
+	public function testFunction() {
+		return 'test';
+	}
 	
     /**
     * Gets a Chunk and caches it; also falls back to file-based templates
@@ -184,7 +186,7 @@ class userValueList {
 					
 					// Save the userlist and redirect to current page
 					$this->saveUserList($key, $currentValues);
-					$this->modx->sendRedirect($this->getRedirectLink($addKey));
+					$this->modx->sendRedirect($this->getRedirectLink($addKey, $value));
 				}
 			}
 			
@@ -200,17 +202,18 @@ class userValueList {
 					
 					// Save the userlist and redirect to current page
 					$this->saveUserList($key, $currentValues);
-					$this->modx->sendRedirect($this->getRedirectLink($addKey));
+					$this->modx->sendRedirect($this->getRedirectLink($addKey, $value));
 				}
 			}
 
 		}
 	}
 	
-	private function getRedirectLink($key) {
+	private function getRedirectLink($key, $value) {
 		$replaceArray = array(
 			$key.'=add',
-			$key.'=remove'
+			$key.'=remove',
+			'value='.$value
 		);
 		
 		$url = str_replace($replaceArray, '', $_SERVER['REQUEST_URI']);
