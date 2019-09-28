@@ -21,9 +21,9 @@
  *
  * @package userValueList
  */
- 
+
 // Load the userValueList class
-$uservaluelist = $modx->getService('uservaluelist','userValueList',$modx->getOption('uservaluelist.core_path',null,$modx->getOption('core_path').'components/uservaluelist/').'model/uservaluelist/',$scriptProperties);
+$uservaluelist = $modx->getService('uservaluelist', 'userValueList', $modx->getOption('uservaluelist.core_path', null, $modx->getOption('core_path') . 'components/uservaluelist/') . 'model/uservaluelist/', $scriptProperties);
 if (!($uservaluelist instanceof userValueList)) return '';
 
 $key = $modx->getOption('key', $scriptProperties, 'userValueList');

@@ -29,46 +29,50 @@
  * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License v2
  * @package uservaluelist
  */
-class userValueList {
+class userValueList
+{
     /**
      * A reference to the modX object.
      * @var modX $modx
      */
-    public $modx = null;
+    public $modx;
+
     /**
      * The request object for the current state
      * @var userValueListControllerRequest $request
      */
     public $request;
+
     /**
      * The controller for the current request
      * @var userValueListController $controller
      */
     public $controller = null;
 
-    function __construct(modX &$modx,array $config = array()) {
+    public function __construct(modX &$modx, array $config = [])
+    {
         $this->modx =& $modx;
 
         /* allows you to set paths in different environments
          * this allows for easier SVN management of files
          */
-        $corePath = $this->modx->getOption('uservaluelist.core_path',null,$modx->getOption('core_path').'components/uservaluelist/');
-        $assetsPath = $this->modx->getOption('uservaluelist.assets_path',null,$modx->getOption('assets_path').'components/uservaluelist/');
-        $assetsUrl = $this->modx->getOption('uservaluelist.assets_url',null,$modx->getOption('assets_url').'components/uservaluelist/');
+        $corePath = $this->modx->getOption('uservaluelist.core_path', null, $modx->getOption('core_path') . 'components/uservaluelist/');
+        $assetsPath = $this->modx->getOption('uservaluelist.assets_path', null, $modx->getOption('assets_path') . 'components/uservaluelist/');
+        $assetsUrl = $this->modx->getOption('uservaluelist.assets_url', null, $modx->getOption('assets_url') . 'components/uservaluelist/');
 
-        $this->config = array_merge(array(
+        $this->config = array_merge([
             'corePath' => $corePath,
-            'modelPath' => $corePath.'model/',
-            'processorsPath' => $corePath.'processors/',
-            'controllersPath' => $corePath.'controllers/',
-            'chunksPath' => $corePath.'elements/chunks/',
-            'snippetsPath' => $corePath.'elements/snippets/',
+            'modelPath' => $corePath . 'model/',
+            'processorsPath' => $corePath . 'processors/',
+            'controllersPath' => $corePath . 'controllers/',
+            'chunksPath' => $corePath . 'elements/chunks/',
+            'snippetsPath' => $corePath . 'elements/snippets/',
 
             'baseUrl' => $assetsUrl,
-            'cssUrl' => $assetsUrl.'css/',
-            'jsUrl' => $assetsUrl.'js/',
-            'connectorUrl' => $assetsUrl.'connector.php'
-        ),$config);
+            'cssUrl' => $assetsUrl . 'css/',
+            'jsUrl' => $assetsUrl . 'js/',
+            'connectorUrl' => $assetsUrl . 'connector.php'
+        ], $config);
 
         if ($this->modx->lexicon) {
             $this->modx->lexicon->load('uservaluelist:default');
@@ -82,16 +86,13 @@ class userValueList {
      * @param string $ctx The context to initialize in.
      * @return string The processed content.
      */
-    public function initialize($ctx = 'mgr') {
+    public function initialize($ctx = 'mgr')
+    {
         $output = '';
 
         return $output;
     }
-	
-	public function testFunction() {
-		return 'test';
-	}
-	
+
     /**
     * Gets a Chunk and caches it; also falls back to file-based templates
     * for easier debugging.
@@ -102,10 +103,11 @@ class userValueList {
     * @param array $properties The properties for the Chunk
     * @return string The processed content of the Chunk
     */
-    public function getChunk($name,$properties = array()) {
+    public function getChunk($name,$properties = [])
+    {
         $chunk = null;
         if (!isset($this->chunks[$name])) {
-            $chunk = $this->modx->getObject('modChunk',array('name' => $name),true);
+            $chunk = $this->modx->getObject('modChunk', ['name' => $name], true);
             if (empty($chunk)) {
                 $chunk = $this->_getTplChunk($name);
                 if ($chunk == false) return false;
@@ -130,7 +132,7 @@ class userValueList {
     * @return modChunk/boolean Returns the modChunk object if found, otherwise
     * false.
     */
-    private function _getTplChunk($name,$postFix = '.tpl') {
+    private function _getTplChunk($name, $postFix = '.tpl') {
         $chunk = false;
         $f = $this->config['chunksPath'].$name.$postFix;
 
@@ -157,9 +159,16 @@ class userValueList {
 			if (isset($extendedFields[$key])) {
 				return json_decode($extendedFields[$key], true);
 			}
-		}
+		} else {
+		    $value = $_COOKIE[$key];
+		    $decodedValue = json_decode((string) $value, true);
+
+		    if (JSON_ERROR_NONE === json_last_error()) {
+		        return $decodedValue;
+            }
+        }
 		
-		return array();
+		return [];
 	}
 	
 	public function saveUserList($key, $list) {
@@ -172,7 +181,9 @@ class userValueList {
 					
 			$userProfile->set('extended', $extendedFields);
 			$userProfile->save();
-		}
+		} else {
+		    setcookie($key, json_encode($list), time() + 31556952, '/');
+        }
 	}
 	
 	public function checkListValue($key, $addKey, $value) {
@@ -210,11 +221,11 @@ class userValueList {
 	}
 	
 	private function getRedirectLink($key, $value) {
-		$replaceArray = array(
+		$replaceArray = [
 			$key.'=add',
 			$key.'=remove',
 			'value='.$value
-		);
+        ];
 		
 		$url = str_replace($replaceArray, '', $_SERVER['REQUEST_URI']);
 		$url = str_replace('&&', '&', $url);

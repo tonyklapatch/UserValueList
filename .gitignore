@@ -1,3 +1,6 @@
+# IDE
+.idea/
+
 # ignore all .htaccess
 .htaccess
 

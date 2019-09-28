@@ -23,12 +23,13 @@
  */
 
 // Load the userValueList class
-$uservaluelist = $modx->getService('uservaluelist','userValueList',$modx->getOption('uservaluelist.core_path',null,$modx->getOption('core_path').'components/uservaluelist/').'model/uservaluelist/',$scriptProperties);
-if (!($uservaluelist instanceof userValueList)) return '';
+$uservaluelist = $modx->getService('uservaluelist', 'userValueList', $modx->getOption('uservaluelist.core_path', null, $modx->getOption('core_path') . 'components/uservaluelist/') . 'model/uservaluelist/', $scriptProperties);
+if (!($uservaluelist instanceof userValueList)) return 'BORKED!';
 
 // Receive properties
 $key = $modx->getOption('key', $scriptProperties, 'userValueList');
 $addKey = $modx->getOption('addKey', $scriptProperties, 'ulv_list');
+$anonymousAllowed = (bool) $modx->getOption('anonymousAllowed', $scriptProperties, true);
 
 if (isset($_GET["value"]) && $_REQUEST[$addKey] === 'remove') {
     $value = $_GET["value"];
@@ -44,14 +45,14 @@ if ($value == '') {
 }
 
 // Get current value
-if ($uservaluelist->isLoggedIn()) {
+if ($uservaluelist->isLoggedIn() || $anonymousAllowed) {
 	// Check if value needs to be added
 	$uservaluelist->checkListValue($key, $addKey, $value); 
 
 	// Get the extra fields
 	$currentValues = $uservaluelist->getUserListValue($key);
 } else { 
-	$currentValues = array();
+	$currentValues = [];
 	return '';
 }
 
@@ -67,14 +68,14 @@ if (in_array($value, $currentValues)) {
 	// Show remove TPL
 	$tpl = $removeTpl;
 	// TEST
-	$link = $_SERVER['REQUEST_URI'].$queryAddString.$addKey.'=remove&value='.$value;
+	$link = $_SERVER['REQUEST_URI'] . $queryAddString . $addKey . '=remove&value=' . $value;
 } else {
 	// Show add TPL
 	$tpl = $addTpl;
-	$link = $_SERVER['REQUEST_URI'].$queryAddString.$addKey.'=add';
+	$link = $_SERVER['REQUEST_URI'] . $queryAddString . $addKey . '=add';
 }
 
-return $uservaluelist->getChunk($tpl, array(
+return $uservaluelist->getChunk($tpl, [
 	'link' => $link,
 	'value' => $value
-));
+]);
