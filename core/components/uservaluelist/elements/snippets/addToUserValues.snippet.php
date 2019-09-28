@@ -24,12 +24,12 @@
 
 // Load the userValueList class
 $uservaluelist = $modx->getService('uservaluelist', 'userValueList', $modx->getOption('uservaluelist.core_path', null, $modx->getOption('core_path') . 'components/uservaluelist/') . 'model/uservaluelist/', $scriptProperties);
-if (!($uservaluelist instanceof userValueList)) return 'BORKED!';
+if (!($uservaluelist instanceof userValueList)) return '';
 
 // Receive properties
 $key = $modx->getOption('key', $scriptProperties, 'userValueList');
 $addKey = $modx->getOption('addKey', $scriptProperties, 'ulv_list');
-$anonymousAllowed = (bool) $modx->getOption('anonymousAllowed', $scriptProperties, true);
+$anonymousAllowed = (bool) $modx->getOption('anonymousAllowed', $scriptProperties, false);
 
 if (isset($_GET["value"]) && $_REQUEST[$addKey] === 'remove') {
     $value = $_GET["value"];
