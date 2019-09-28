@@ -49,6 +49,11 @@ class userValueList
      */
     public $controller = null;
 
+    /**
+     * userValueList constructor.
+     * @param modX $modx
+     * @param array $config
+     */
     public function __construct(modX &$modx, array $config = [])
     {
         $this->modx =& $modx;
@@ -67,7 +72,6 @@ class userValueList
             'controllersPath' => $corePath . 'controllers/',
             'chunksPath' => $corePath . 'elements/chunks/',
             'snippetsPath' => $corePath . 'elements/snippets/',
-
             'baseUrl' => $assetsUrl,
             'cssUrl' => $assetsUrl . 'css/',
             'jsUrl' => $assetsUrl . 'js/',
@@ -145,11 +149,22 @@ class userValueList
         }
         return $chunk;
     }
-	
+
+    /**
+     * Determines whether if the user is logged into the current context
+     *
+     * @return mixed
+     */
 	public function isLoggedIn() {
 		return $this->modx->user->hasSessionContext($this->modx->context->get('key'));
-	} 
-	
+	}
+
+    /**
+     * Gets a list value from storage
+     *
+     * @param $key
+     * @return array|mixed
+     */
 	public function getUserListValue($key) {
 		$userProfile = $this->modx->user->getOne('Profile');
 		
@@ -170,7 +185,13 @@ class userValueList
 		
 		return [];
 	}
-	
+
+    /**
+     * Persists the user list value to storage
+     *
+     * @param $key
+     * @param $list
+     */
 	public function saveUserList($key, $list) {
 		$userProfile = $this->modx->user->getOne('Profile');
 		
@@ -185,7 +206,14 @@ class userValueList
 		    setcookie($key, json_encode($list), time() + 31556952, '/');
         }
 	}
-	
+
+    /**
+     * Route list value requests
+     *
+     * @param $key
+     * @param $addKey
+     * @param $value
+     */
 	public function checkListValue($key, $addKey, $value) {
 		if (isset($_REQUEST[$addKey])) {
 			$currentValues = $this->getUserListValue($key);
@@ -219,7 +247,14 @@ class userValueList
 
 		}
 	}
-	
+
+    /**
+     * Constructs the link to redirect to after adding/removing an item from a list
+     *
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
 	private function getRedirectLink($key, $value) {
 		$replaceArray = [
 			$key.'=add',
@@ -229,6 +264,7 @@ class userValueList
 		
 		$url = str_replace($replaceArray, '', $_SERVER['REQUEST_URI']);
 		$url = str_replace('&&', '&', $url);
+
 		return str_replace('?&', '?', $url);
 	}
 }

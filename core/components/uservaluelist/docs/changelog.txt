@@ -1,1 +1,8 @@
-1.0: Initial Version
+1.1 (9/28/2019):
+
+- Added support for anonymous user value lists stored in a cookie (anonymousAllowed parameter for the addToUserValues snippet)
+- Code cleanup
+
+1.0:
+
+- Initial Version

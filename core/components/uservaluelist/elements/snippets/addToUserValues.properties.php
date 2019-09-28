@@ -67,6 +67,14 @@ $properties = [
 		'options' => '',
 		'value' => '',
 		'lexicon' => ''
-	]
+	],
+    [
+        'name' => 'anonymousAllowed',
+        'desc' => 'Allow non-logged in guest users to add items to a list and persist it to a cookie with the name of the cookie being the list key.',
+        'type' => 'textfield',
+        'options' => '',
+        'value' => '',
+        'lexicon' => ''
+    ]
 ];
 return $properties;
